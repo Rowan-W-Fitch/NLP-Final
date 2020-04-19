@@ -10,11 +10,43 @@ Steps:
 - run the program with: "py test.py (shelter in place .txt folder name) (computer generated summaries folder) (human summary folder)"
 
 Outer Directory should look like this:
+
+│   requirements.txt
+│   test.py
+│   test2.py
+│
 ├───cg_summaries
-├───glove| 
-         -- glove.6B.100d.txt
+│
+├───glove
+│       glove.6B.100d.txt
+│       glove.6B.200d.txt
+│       glove.6B.300d.txt
+│       glove.6B.50d.txt
+│
 ├───human_summaries
-├───pdfs to convert
+│       Alabama.txt
+│       Alaska.txt
+│       Athens-Clarke.txt
+│       California.txt
+│       Delaware.txt
+│       Douglas.txt
+│       Hawaii.txt
+│       Johnson.txt
+│       Leavenworth.txt
+│       Maine.txt
+│       Orange County FL.txt
+│       Savannah.txt
+│
 └───Shelter In Place Orders
-|--- test.py
-|--- test2.py
+        Alabama.txt
+        Alaska.txt
+        Athens-Clarke.txt
+        California.txt
+        Delaware.txt
+        Douglas.txt
+        Hawaii.txt
+        Johnson.txt
+        Leavenworth.txt
+        Maine.txt
+        Orange County FL.txt
+        Savannah.txt
