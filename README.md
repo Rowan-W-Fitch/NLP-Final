@@ -7,4 +7,4 @@ Steps:
 - download this: http://nlp.stanford.edu/data/glove.6B.zip (file too big to put in repo, need it for vector embedding)
 - save glove.6B.100d.txt in a folder called 'glove' in the same level as test.py
 - create an empty folder for computer generated summaries to go, put in the same level as test.py
-- run the program with: "py test.py <shelter in place .txt folder name> <computer generated summaries folder> <human summary folder>"
+- run the program with: "py test.py (shelter in place .txt folder name) (computer generated summaries folder) (human summary folder)"
