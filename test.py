@@ -3,11 +3,14 @@ import re
 import os
 import numpy as np
 import nltk
+import gensim
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 import networkx as nx
 from rouge_score import rouge_scorer
-from nltk.translate.bleu_score import corpus_bleu
+from nltk.tokenize import sent_tokenize
+from nltk.tokenize import word_tokenize
+from queue import PriorityQueue
 
 SIP_folder = sys.argv[1] #name of folder holding Shelter in place orders as txt files, SIP = Shelter In Place
 CG_Summary_folder = sys.argv[2] #name of folder holding computer generated summaries
@@ -72,34 +75,62 @@ for f in os.listdir(SIP_folder):
     file.close()
 print('summaries written') #status update
 
-#little function that preps the cg summary for nltk bleu score
-def bleu_prep_cg(doc):
-    ref = []
-    for sentence in nltk.sent_tokenize(doc):
-        ref.append(nltk.word_tokenize(sentence))
-    return ref
-
-#function preps human summary for nltk bleu score
-def bleu_prep_human(doc):
-    hyp = []
-    for sentence in nltk.sent_tokenize(doc):
-        hyp.append(nltk.word_tokenize(sentence))
-    return hyp
-
-#get ROGUE score for each of the summaries
+#get metrics, and sentences common among all summaries
+avg_pr1, avg_prL= 0, 0
+avg_rec1, avg_recL = 0, 0
+avg_fm1, avg_fmL  = 0, 0
 rs = rouge_scorer.RougeScorer(['rouge1', 'rougeL'], use_stemmer = True)
+sentences = []
 for order in orders:
     #open files
-    human_summary = os.path.join(Human_Summary_folder, order)
-    cg_summary = os.path.join(CG_Summary_folder, order)
+    human_summary = open(os.path.join(Human_Summary_folder, order), encoding = 'utf-8')
+    cg_summary = open(os.path.join(CG_Summary_folder, order), encoding = 'utf-8')
+    #get txt
+    cg_txt = cg_summary.read()
+    human_txt = human_summary.read()
     #use rouge package
-    r_scores = rs.score(open(cg_summary, encoding = 'utf-8').read(), open(human_summary, encoding = 'utf-8').read())
-    b_score = corpus_bleu(bleu_prep_cg(open(cg_summary, encoding = 'utf-8').read()), bleu_prep_human(open(human_summary, encoding = 'utf-8').read()))
-    #print scores
-    print('ROUGE scores: ', r_scores)
-    print('BLEU score: ', b_score)
-    #put this in here in case the user wants to see what the cg summary looks like
-    print("$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-    print(" ")
+    r_scores = rs.score(cg_txt, human_txt)
+    #add sentences to list(for simmilar sentences among all docs)
+    for sentence in sent_tokenize(cg_txt):
+        sentences.append(sentence)
+    #avg metrics for 1-gram
+    avg_pr1 += r_scores['rouge1'][0]
+    avg_rec1 += r_scores['rouge1'][1]
+    avg_fm1 += r_scores['rouge1'][2]
+    #avg metrics for L
+    avg_prL += r_scores['rougeL'][0]
+    avg_recL += r_scores['rougeL'][1]
+    avg_fmL += r_scores['rougeL'][2]
     human_summary.close()
     cg_summary.close()
+
+avg_pr1/=12
+avg_prL/=12
+avg_rec1/=12
+avg_recL/=12
+avg_fm1/=12
+avg_fmL/=12
+print("avg precisions: ", "r1 -> ", avg_pr1, " rL -> ", avg_prL)
+print("avg recalls: ", "r1 -> ", avg_rec1, " rL -> ", avg_recL)
+print("avg fmeasures: ", "r1 -> ", avg_fm1, " rL -> ", avg_fmL)
+
+#after metrics, get simmilar sentences among all 12 docs
+#create dict of all words
+words = [[w.lower() for w in word_tokenize(sentence)]
+            for sentence in sentences]
+dictionary = gensim.corpora.Dictionary(words)
+#create corpus
+corpus = [dictionary.doc2bow(word) for word in words]
+#score sentences on TFIDF
+tfidf = gensim.models.TfidfModel(corpus)
+#convert each sentence into sum of TFIDF score of each word
+#get top 5 scores w/ priority queue
+Q = PriorityQueue()
+for doc, sent in zip(tfidf[corpus], sentences):
+    score = 0
+    for id, freq in doc:
+        score += freq
+    Q.put((score, sent))
+
+for i in range(20):
+    print(Q.get()[1])
