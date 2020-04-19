@@ -1,7 +1,10 @@
 # NLP-Final
 NLP final project
 
-- install networkx with: "pip install networkx"
-- download this file: http://nlp.stanford.edu/data/glove.6B.zip
-- change the directory in line 17 of test.py to match where your glove.txt file is stored
-- run the code with (python test.py "Shelter In Place Orders") to see what happens
+Steps:
+- create a python virtual environment
+- install all of the requirements with "pip install -r requirements.txt" (sorry, alot of the packages are unneccessary from old projects)
+- download this: http://nlp.stanford.edu/data/glove.6B.zip (file too big to put in repo, need it for vector embedding)
+- save glove.6B.100d.txt in a folder called 'glove' in the same level as test.py
+- create an empty folder for computer generated summaries to go, put in the same level as test.py
+- run the program with: "py test.py <shelter in place .txt folder name> <computer generated summaries folder> <human summary folder>"
