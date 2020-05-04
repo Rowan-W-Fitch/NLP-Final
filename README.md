@@ -2,6 +2,7 @@
 NLP final project
 
 write up is the file named "nlp_final.pdf"
+
 video presentation: https://www.youtube.com/watch?time_continue=3&v=6o87eiryc6s&feature=emb_logo
 
 Running Project
