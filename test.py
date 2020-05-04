@@ -64,7 +64,7 @@ for f in os.listdir(SIP_folder):
                 matrix[i][j] = cosine_similarity(vctrs[i].reshape(1,100), vctrs[j].reshape(1,100))[0,0]
     #represent matrix as a graph, and perform pagerank algorithm
     graph = nx.from_numpy_array(matrix)
-    scores = nx.pagerank(graph)
+    scores = nx.pagerank_numpy(graph)
     ranked = sorted(((scores[i],s) for i,s in enumerate(sentences)), reverse = True)
     #get summary
     summary = " ".join([ranked[i][1] for i in range(10)])
@@ -81,8 +81,12 @@ avg_rec1, avg_recL = 0, 0
 avg_fm1, avg_fmL  = 0, 0
 rs = rouge_scorer.RougeScorer(['rouge1', 'rougeL'], use_stemmer = True)
 sentences = []
+len = 0
+max_pr1, max_rec1, max_f1 = 0, 0, 0
+max_prL, max_recL, max_fL = 0, 0, 0
 for order in orders:
     #open files
+    len +=1
     human_summary = open(os.path.join(Human_Summary_folder, order), encoding = 'utf-8')
     cg_summary = open(os.path.join(CG_Summary_folder, order), encoding = 'utf-8')
     #get txt
@@ -95,26 +99,33 @@ for order in orders:
         sentences.append(sentence)
     #avg metrics for 1-gram
     avg_pr1 += r_scores['rouge1'][0]
+    max_pr1 = max(r_scores['rouge1'][0], max_pr1)
     avg_rec1 += r_scores['rouge1'][1]
+    max_rec1 = max(r_scores['rouge1'][1], max_rec1)
     avg_fm1 += r_scores['rouge1'][2]
+    max_f1 = max(r_scores['rouge1'][2], max_f1)
     #avg metrics for L
     avg_prL += r_scores['rougeL'][0]
+    max_prL = max(r_scores['rougeL'][0], max_prL)
     avg_recL += r_scores['rougeL'][1]
+    max_recL = max(r_scores['rougeL'][1], max_recL)
     avg_fmL += r_scores['rougeL'][2]
+    max_fL = max(r_scores['rougeL'][2], max_fL)
     human_summary.close()
     cg_summary.close()
 
-avg_pr1/=12
-avg_prL/=12
-avg_rec1/=12
-avg_recL/=12
-avg_fm1/=12
-avg_fmL/=12
+avg_pr1/=len
+avg_prL/=len
+avg_rec1/=len
+avg_recL/=len
+avg_fm1/=len
+avg_fmL/=len
 print("avg precisions: ", "r1 -> ", avg_pr1, " rL -> ", avg_prL)
 print("avg recalls: ", "r1 -> ", avg_rec1, " rL -> ", avg_recL)
 print("avg fmeasures: ", "r1 -> ", avg_fm1, " rL -> ", avg_fmL)
-
-#after metrics, get simmilar sentences among all 12 docs
+print("max pr1 ", max_pr1, " max rec1 ", max_rec1, " max_f1 ", max_f1)
+print("max prL ", max_prL, " max recL ", max_recL, " max_fL ", max_fL)
+#after metrics, get simmilar sentences among all docs
 #create dict of all words
 words = [[w.lower() for w in word_tokenize(sentence)]
             for sentence in sentences]
