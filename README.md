@@ -1,14 +1,14 @@
 # NLP-Final
 NLP final project
 
-write up is the file named "nlp_final.pdf"
+The project write up is the file named "nlp_final.pdf"
 
 video presentation: https://www.youtube.com/watch?time_continue=3&v=6o87eiryc6s&feature=emb_logo
 
 Running Project
 Steps:
 - create a python virtual environment
-- install all of the requirements with "pip install -r requirements.txt" (sorry, alot of the packages are from old projects)
+- install all of the requirements with ```pip install -r requirements.txt``` (sorry, alot of the packages are from old projects)
 - download this: http://nlp.stanford.edu/data/glove.6B.zip (file too big to put in repo, need it for vector embedding)
 - save glove.6B.100d.txt in a folder called 'glove' in the same level as test.py
 - create an empty folder for computer generated summaries to go, put in the same level as test.py
