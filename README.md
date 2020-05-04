@@ -11,7 +11,7 @@ Steps:
                 -> "python test.py (shelter in place .txt folder name) (computer generated summaries folder) (human summary folder)"
 
 Outer Directory should look like this:
-
+```
 │   requirements.txt
 │   test.py
 │
@@ -50,3 +50,4 @@ Outer Directory should look like this:
         Maine.txt
         Orange County FL.txt
         Savannah.txt
+```
