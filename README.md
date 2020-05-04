@@ -10,6 +10,8 @@ Steps:
 - run the program with:
 - ```python test.py <shelter in place .txt folder name> <computer generated summaries folder> <human summary folder>```
 
+-link to video: https://www.youtube.com/watch?time_continue=3&v=6o87eiryc6s&feature=emb_logo
+
 Outer Directory should look like this:
 ```
 │   requirements.txt
